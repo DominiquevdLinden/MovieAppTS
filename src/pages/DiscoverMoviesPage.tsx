@@ -61,19 +61,31 @@ export default function DiscoverMoviesPage() {
         />
         <button onClick={search}>Search</button>
       </p>
-      {searchState.status === "success"
-        ? searchState.data.Search.map((mov) => {
-            return (
-              <Movie
-                Title={mov.Title}
-                Poster={mov.Poster}
-                imdbID={mov.imdbID}
-                Type={mov.Type}
-                Year={mov.Year}
-              />
-            );
-          })
-        : "waiting..."}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-evenly",
+        }}
+      >
+        {searchState.status === "idle" ? "Please search for a movie" : ""}
+        {searchState.status === "loading" ? "Loading..." : ""}
+        {searchState.status === "error" ? "Oops something went wrong..." : ""}
+        {searchState.status === "success"
+          ? searchState.data.Search.map((mov) => {
+              return (
+                <Movie
+                  Title={mov.Title}
+                  Poster={mov.Poster}
+                  imdbID={mov.imdbID}
+                  Type={mov.Type}
+                  Year={mov.Year}
+                />
+              );
+            })
+          : ""}
+      </div>
     </div>
   );
 }

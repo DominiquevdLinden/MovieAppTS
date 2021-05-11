@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Movie from "../components/Movie";
 
 type SearchState =
   | { status: "idle" }
   | { status: "loading" }
-  | { status: "success"; data: any } // todo: specify the data type too
+  | { status: "success"; data: ApiResult } // todo: specify the data type too
   | { status: "error"; error: any };
 
-type Movies = {
+export type Movies = {
   Poster: string;
   Title: string;
   Type: string;
@@ -16,7 +17,7 @@ type Movies = {
 };
 
 type ApiResult = {
-  Response: string;
+  Response: "true";
   Search: Movies[];
   totalResults: string;
 };
@@ -38,12 +39,13 @@ export default function DiscoverMoviesPage() {
 
       // Option B: use the `axios` library like we did on Tuesday
 
-      const data: ApiResult = await axios.get(
+      const response = await axios.get(
         `https://omdbapi.com/?apikey=25a32d1d&s=${queryParam}`
       );
 
-      console.log("Success!", data);
-      setSearchState({ status: "success", data: data });
+      console.log("Success!", response);
+
+      setSearchState({ status: "success", data: response.data });
     } catch (e) {
       setSearchState({ status: "error", error: e });
     }
@@ -59,6 +61,19 @@ export default function DiscoverMoviesPage() {
         />
         <button onClick={search}>Search</button>
       </p>
+      {searchState.status === "success"
+        ? searchState.data.Search.map((mov) => {
+            return (
+              <Movie
+                Title={mov.Title}
+                Poster={mov.Poster}
+                imdbID={mov.imdbID}
+                Type={mov.Type}
+                Year={mov.Year}
+              />
+            );
+          })
+        : "waiting..."}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Movie from "../components/Movie";
 import { useHistory } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 type SearchState =
   | { status: "idle" }
@@ -29,29 +29,34 @@ export default function DiscoverMoviesPage() {
   const [searchState, setSearchState] = useState<SearchState>({
     status: "idle",
   });
+  const routeParam = useParams<{ searchText: string }>();
 
   const history = useHistory();
 
   const navigateToSearch = () => {
-    const routeParam = encodeURIComponent(searchText);
     history.push(`/discover/${routeParam}`);
   };
 
   useEffect(() => {
     const getData = async () => {
+      if (!routeParam.searchText) {
+        setSearchState({ status: "idle" });
+        return;
+      }
+      const queryParam = encodeURIComponent(routeParam.searchText);
       setSearchState({ status: "loading" });
       const response = await axios.get(
-        `https://omdbapi.com/?apikey=25a32d1d&s=${searchText}`
+        `https://omdbapi.com/?apikey=25a32d1d&s=${queryParam}`
       );
       try {
         setSearchState({ status: "success", data: response.data });
+        console.log(searchState);
       } catch (e) {
         setSearchState({ status: "error", error: e });
       }
-      console.log("Result fetching", searchState);
     };
     getData();
-  }, [searchText]);
+  }, [routeParam.searchText]);
 
   //BABYY I love you keep sharing Iwill do sth else :))))
   //Yeah? I love you more ;) sure cutie

@@ -13,7 +13,8 @@ function App() {
     <div className="App">
       <NavBar />
       <Switch>
-        <Route path="/discover/:imdbID" component={DetailPage} />
+        <Route path="/movies/:imdbID" component={DetailPage} />
+        <Route path="/discover/:searchText?" component={DiscoverMoviesPage} />
         <Route path="/discover" component={DiscoverMoviesPage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/" component={HomePage} />

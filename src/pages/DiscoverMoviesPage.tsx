@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Movie from "../components/Movie";
+import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
 
 type SearchState =
   | { status: "idle" }
@@ -28,29 +30,31 @@ export default function DiscoverMoviesPage() {
     status: "idle",
   });
 
-  const search = async () => {
-    try {
-      console.log("Start searching for:", searchText);
-      setSearchState({ status: "loading" });
+  const history = useHistory();
 
-      // Best practice: encode the string so that special characters
-      //  like '&' and '?' don't accidentally mess up the URL
-      const queryParam = encodeURIComponent(searchText);
-
-      // Option B: use the `axios` library like we did on Tuesday
-
-      const response = await axios.get(
-        `https://omdbapi.com/?apikey=25a32d1d&s=${queryParam}`
-      );
-
-      console.log("Success!", response);
-
-      setSearchState({ status: "success", data: response.data });
-    } catch (e) {
-      setSearchState({ status: "error", error: e });
-    }
+  const navigateToSearch = () => {
+    const routeParam = encodeURIComponent(searchText);
+    history.push(`/discover/${routeParam}`);
   };
 
+  useEffect(() => {
+    const getData = async () => {
+      setSearchState({ status: "loading" });
+      const response = await axios.get(
+        `https://omdbapi.com/?apikey=25a32d1d&s=${searchText}`
+      );
+      try {
+        setSearchState({ status: "success", data: response.data });
+      } catch (e) {
+        setSearchState({ status: "error", error: e });
+      }
+      console.log("Result fetching", searchState);
+    };
+    getData();
+  }, [searchText]);
+
+  //BABYY I love you keep sharing Iwill do sth else :))))
+  //Yeah? I love you more ;) sure cutie
   return (
     <div>
       <h1>Discover some movies!</h1>
@@ -59,7 +63,8 @@ export default function DiscoverMoviesPage() {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
-        <button onClick={search}>Search</button>
+
+        <button onClick={navigateToSearch}>Search</button>
       </p>
       <div
         style={{

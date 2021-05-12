@@ -4,7 +4,7 @@ import { Movies } from "../pages/DiscoverMoviesPage";
 
 export default function Movie(props: Movies) {
   return (
-    <Link to={`/discover/${props.imdbID}`}>
+    <Link to={`/movies/${props.imdbID}`}>
       <div
         style={{
           display: "flex",
